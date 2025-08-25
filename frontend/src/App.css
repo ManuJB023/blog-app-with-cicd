@@ -1,0 +1,53 @@
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.layout header h1 {
+  margin: 0;
+  color: white;
+}
+
+.layout main {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.layout footer {
+  background-color: #f0f0f0;
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  margin-top: auto;
+}
+
+.blog-list,
+.blog-post,
+.create-post {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.blog-list h2,
+.blog-post h2,
+.create-post h2 {
+  color: #333;
+  margin-bottom: 15px;
+}

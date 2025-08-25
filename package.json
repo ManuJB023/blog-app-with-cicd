@@ -1,0 +1,41 @@
+{
+  "name": "blog-app-with-cicd",
+  "version": "1.0.0",
+  "description": "Full-stack blog application with TDD, AWS CDK, and CI/CD pipeline",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:api\"",
+    "start:frontend": "cd frontend && npm start",
+    "start:api": "cd infrastructure && npm run watch",
+    "build": "npm run build:frontend && npm run build:infrastructure",
+    "build:frontend": "cd frontend && npm run build",
+    "build:infrastructure": "cd infrastructure && npm run build",
+    "test": "npm run test:frontend && npm run test:infrastructure",
+    "test:frontend": "cd frontend && npm test -- --watchAll=false",
+    "test:infrastructure": "cd infrastructure && npm test",
+    "test:coverage": "cd frontend && npm run test:coverage",
+    "lint": "npm run lint:frontend && npm run lint:infrastructure",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:infrastructure": "cd infrastructure && npm run lint",
+    "deploy": "cd infrastructure && npx cdk deploy",
+    "destroy": "cd infrastructure && npx cdk destroy",
+    "bootstrap": "cd infrastructure && npx cdk bootstrap",
+    "synth": "cd infrastructure && npx cdk synth",
+    "install:all": "npm install && cd frontend && npm install && cd ../infrastructure && npm install",
+    "setup": "npm run install:all && npm run bootstrap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/blog-app-with-cicd.git"
+  },
+  "keywords": ["react", "typescript", "aws", "cdk", "lambda", "testing", "tdd", "cicd"],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
