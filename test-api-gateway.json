@@ -1,0 +1,8 @@
+{
+    "resource": "/{proxy+}",
+    "path": "/posts",
+    "httpMethod": "GET",
+    "pathParameters": {"proxy": "posts"},
+    "headers": {"Content-Type": "application/json"},
+    "body": null
+}

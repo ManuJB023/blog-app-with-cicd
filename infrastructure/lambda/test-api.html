@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h2>API Connection Test</h2>
+    <button onclick="testGET()">Test GET /posts</button>
+    <button onclick="testPOST()">Test POST /posts</button>
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+    
+    <script>
+    const API_URL = 'https://n2vsdx3slj.execute-api.us-east-1.amazonaws.com/prod';
+    
+    async function testGET() {
+        try {
+            const response = await fetch(API_URL + '/posts');
+            const data = await response.json();
+            showResult('GET Success:', data);
+        } catch (error) {
+            showResult('GET Error:', error);
+        }
+    }
+    
+    async function testPOST() {
+        try {
+            const response = await fetch(API_URL + '/posts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: 'Test Post ' + Date.now(),
+                    content: 'This is a test post',
+                    author: 'Test User'
+                })
+            });
+            const data = await response.json();
+            showResult('POST Success:', data);
+        } catch (error) {
+            showResult('POST Error:', error);
+        }
+    }
+    
+    function showResult(type, data) {
+        document.getElementById('result').innerHTML = 
+            '<strong>' + type + '</strong><br><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    }
+    </script>
+</body>
+</html>

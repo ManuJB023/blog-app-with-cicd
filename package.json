@@ -28,11 +28,23 @@
     "type": "git",
     "url": "git+https://github.com/yourusername/blog-app-with-cicd.git"
   },
-  "keywords": ["react", "typescript", "aws", "cdk", "lambda", "testing", "tdd", "cicd"],
+  "keywords": [
+    "react",
+    "typescript",
+    "aws",
+    "cdk",
+    "lambda",
+    "testing",
+    "tdd",
+    "cicd"
+  ],
   "author": "Your Name <your.email@example.com>",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.13"
   },
   "engines": {
     "node": ">=18.0.0",

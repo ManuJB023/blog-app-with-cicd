@@ -4,8 +4,8 @@
   "description": "Lambda function for blog API",
   "main": "index.js",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.441.0",
-    "@aws-sdk/lib-dynamodb": "^3.441.0",
+    "@aws-sdk/client-dynamodb": "^3.896.0",
+    "@aws-sdk/lib-dynamodb": "^3.896.0",
     "uuid": "^9.0.1"
   }
 }
