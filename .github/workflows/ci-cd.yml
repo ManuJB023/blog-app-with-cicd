@@ -1,129 +1,53 @@
-name: CI/CD Pipeline
+name: CI/CD
 
 on:
   push:
     branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
       - master
 
 jobs:
-  test:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Test and Build
-    
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: 18
 
-      - name: Install root dependencies
-        run: npm ci
-
+      # 🔹 Install dependencies for infrastructure (CDK)
       - name: Install infrastructure dependencies
         working-directory: infrastructure
         run: npm ci
 
+      # 🔹 Deploy infrastructure
+      - name: Deploy infrastructure with CDK
+        working-directory: infrastructure
+        run: npx cdk deploy --require-approval never
+
+      # 🔹 Capture API Gateway URL from CDK output
+      - name: Get API URL from CDK Outputs
+        id: get-api
+        run: |
+          API_URL=$(cdk output --json | jq -r '.BlogAppStack.ApiUrl')
+          echo "API_URL=$API_URL" >> $GITHUB_ENV
+
+      # 🔹 Install frontend dependencies
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
 
+      # 🔹 Build frontend with API URL injected
       - name: Build frontend
         working-directory: frontend
         run: |
-          NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          echo "REACT_APP_API_URL=$API_URL" > .env
+          npm run build
 
-      - name: Validate CDK synthesis
+      # 🔹 Deploy frontend assets to S3
+      - name: Deploy frontend to S3
         working-directory: infrastructure
-        run: |
-          npx cdk synth --context environment=test
-
-  deploy-dev:
-    runs-on: ubuntu-latest
-    name: Deploy to Development
-    needs: test
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION || 'us-east-1' }}
-
-      - name: Install dependencies
-        run: |
-          npm ci
-          cd frontend && npm ci && cd ..
-          cd infrastructure && npm ci && cd ..
-
-      - name: Deploy to development
-        run: |
-          chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh --environment dev
-
-      - name: Run API tests
-        run: |
-          # Get API URL from CDK outputs
-          API_URL=$(cdk output --context environment=dev 2>/dev/null | grep -o 'https://[^"]*' | head -1)
-          
-          if [ ! -z "$API_URL" ]; then
-            echo "Testing API at: $API_URL"
-            # Test GET endpoint
-            curl -f "$API_URL/blog" || echo "API test failed"
-          else
-            echo "Could not determine API URL"
-          fi
-
-  # Optional: Deploy to production (only on manual trigger)
-  deploy-prod:
-    runs-on: ubuntu-latest
-    name: Deploy to Production
-    needs: deploy-dev
-    if: github.event_name == 'workflow_dispatch'
-    environment: production
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION || 'us-east-1' }}
-
-      - name: Install dependencies
-        run: |
-          npm ci
-          cd frontend && npm ci && cd ..
-          cd infrastructure && npm ci && cd ..
-
-      - name: Deploy to production
-        run: |
-          chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh --environment prod
+        run: npx cdk deploy --require-approval never
