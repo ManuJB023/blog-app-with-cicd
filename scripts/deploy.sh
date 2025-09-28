@@ -60,7 +60,7 @@ fi
 
 # Deploy CDK stack
 echo "Deploying CDK stack..."
-cdk deploy --context environment="$ENVIRONMENT" --require-approval never
+npx npx cdk deploy --context environment="$ENVIRONMENT" --require-approval never
 
 echo "Deployment completed successfully!"
 echo "Check the CDK outputs for your application URLs."

@@ -84,7 +84,7 @@ check_aws_cli() {
 
 # Function to check if CDK is available
 check_cdk_cli() {
-  if ! command -v cdk &> /dev/null; then
+  if ! command -v npx cdk &> /dev/null; then
     echo -e "${RED}Error: AWS CDK CLI is not installed${NC}"
     echo "Install with: npm install -g aws-cdk"
     exit 1
@@ -94,7 +94,7 @@ check_cdk_cli() {
 # Function to check if stack exists
 check_stack_exists() {
   local stack_name=$1
-  if cdk list --context environment="${ENVIRONMENT}" | grep -q "${stack_name}"; then
+  if npx cdk list --context environment="${ENVIRONMENT}" | grep -q "${stack_name}"; then
     return 0
   else
     return 1
@@ -150,9 +150,9 @@ destroy_stack() {
   
   if [ "$FORCE" = true ]; then
     echo -e "${YELLOW}Force mode enabled - skipping dependency checks${NC}"
-    cdk destroy "${stack_name}" --force --context environment="${ENVIRONMENT}"
+    npx cdk destroy "${stack_name}" --force --context environment="${ENVIRONMENT}"
   else
-    cdk destroy "${stack_name}" --context environment="${ENVIRONMENT}"
+    npx cdk destroy "${stack_name}" --context environment="${ENVIRONMENT}"
   fi
   
   if [ $? -eq 0 ]; then
