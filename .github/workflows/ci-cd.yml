@@ -42,7 +42,6 @@ jobs:
           NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
       - name: Validate CDK synthesis
-        working-directory: infrastructure
         run: |
           npx cdk synth --context environment=test
 
@@ -83,7 +82,7 @@ jobs:
       - name: Run API tests
         run: |
           # Get API URL from CDK outputs
-          API_URL=$(cdk output --context environment=dev 2>/dev/null | grep -o 'https://[^"]*' | head -1)
+          API_URL=$(npx cdk output --context environment=dev 2>/dev/null | grep -o 'https://[^"]*' | head -1)
           
           if [ ! -z "$API_URL" ]; then
             echo "Testing API at: $API_URL"
